@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <link rel="stylesheet" type="text/less" href="main.less" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/less.js/3.9.0/less.min.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+</head>
+
+<body id="app">
+    <tooltip id="tooltip" class="" style="top:-999px; left:-999px;">
+        Hello
+    </tooltip>
+    <title-bar id="title-bar" class="inactive">
+        <button tabindex="-1" class="text new" onclick="newProjectDialog()"
+                onmouseover="showToolTip(this, 'create a PicoBuild project', 'ctrl+N' )"
+                onmouseout="hideToolTip(this)">
+            new
+        </button>
+        <button tabindex="-1" class="text open" onclick="openProjectDialog()" 
+                onmouseover="showToolTip(this, 'open a PicoBuild project', 'ctrl+O')"
+                onmouseout="hideToolTip(this)">
+            open
+        </button>
+        <button tabindex="-1" class="text save" onclick="saveProject()" 
+                onmouseover="showToolTip(this, 'save the current project', 'ctrl+S')"
+                onmouseout="hideToolTip(this)">
+            save
+        </button>
+        <button tabindex="-1" class="text export" onclick="exportProjectDialog()" 
+                onmouseover="showToolTip(this, 'export a .p8 project', 'alt+E')"
+                onmouseout="hideToolTip(this)">
+            export
+        </button>
+        <button tabindex="-1" class="text run" onclick="runProject()" 
+                onmouseover="showToolTip(this, 'export and run a .p8 project', 'alt+X')"
+                onmouseout="hideToolTip(this)">
+            run
+        </button>
+
+        <window-title>
+            PicoBuild&nbsp;&nbsp;<project-path>&lt;&nbsp;<em class="project-name">no project</em>&nbsp;&gt;
+            </project-path>
+        </window-title>
+
+        <button tabindex="-1" class="right close" onclick="location.reload()">
+            @
+        </button>
+        <button tabindex="-1" class="right minimize">
+            -
+        </button>
+        <button tabindex="-1" class="right close" onclick="closeWindow()">
+            x
+        </button>
+    </title-bar>
+
+    <no-project>
+        <div>no project loaded :(</div>
+    </no-project>
+
+    <main>
+        <left>
+            <region class="text">
+                <region-name><span class="changes"></span> <em class="project-name">none</em></region-name>
+                <textarea class="region-body" tabindex="1" id="project-text" oninput="startChanges('code'); updateProjectFromCode();" onchange="finishChanges('code')">Hello&NewLine;World</textarea>
+            </region>
+            <!-- <project-source>
+                <project-path><span class="changes"></span> <em class="project-name">none</em></project-path>
+                <textarea tabindex="1" id="project-text" oninput="updateProjectTextFromCode()">Hello&NewLine;World</textarea>
+            </project-source> -->
+        </left>
+        <right>
+            <row>
+                <region class="code">
+                    <region-name>
+                        <button tabindex="-1" class="add" onclick="addScripts()" onmouseover="showToolTip(this, 'include a .lua script<br>shift+click to include a directory', '')" onmouseout="hideToolTip(this)">+</button>
+                        <content>Scripts</content>
+                    </region-name>
+                    <textarea tabindex="2" id="project-scripts" class="region-body" placeholder="none" oninput="startChanges('scripts')" onchange="finishChanges('scripts')"></textarea>
+                </region>
+                <region class="sprites">
+                    <region-name>
+                        <button tabindex="-1" class="add" onclick="addSprites()" onmouseover="showToolTip(this, 'import sprites from a .p8 or .png file<br>shift+click to import a directory', '')" onmouseout="hideToolTip(this)">+</button>
+                        <content>Sprite Sheets</content>
+                    </region-name>
+                    <textarea tabindex="3" id="project-sprites" class="region-body" placeholder="none" oninput="startChanges('sprites')" onchange="finishChanges('sprites')"></textarea>
+                </region>
+            </row>
+            <region class="maps">
+                <region-name>
+                    <button tabindex="-1" class="add" onclick="addMaps()" onmouseover="showToolTip(this, 'import a .tmx map<br>shift+click to import a directory', '')" onmouseout="hideToolTip(this)">+</button>
+                    <content>Maps</content>
+                    <button tabindex="-1" class="extra" onclick="addMaps()" onmouseover="showToolTip(this, 'generate a .png to use with Tiled', '')" onmouseout="hideToolTip(this)">export tileset .png</button>
+                </region-name>
+                <textarea tabindex="4" id="project-maps" class="region-body" placeholder="none" oninput="startChanges('maps')" onchange="finishChanges('maps')"></textarea>
+            </region>
+            <row>
+                <region class="sfx">
+                    <region-name>
+                        <button tabindex="-1" class="add" onclick="addSfx()" onmouseover="showToolTip(this, 'import sfx from a .p8 file', '')" onmouseout="hideToolTip(this)">+</button>
+                        <content>Sfx</content>
+                    </region-name>
+                    <textarea tabindex="5" id="project-sfx" class="region-body" placeholder="none" oninput="startChanges('sfx')" onchange="finishChanges('sfx')"></textarea>
+                </region>
+                <region class="music">
+                    <region-name>
+                        <button tabindex="-1" class="add" onclick="addMusic()" onmouseover="showToolTip(this, 'import music from a .p8 file', '')" onmouseout="hideToolTip(this)">+</button>
+                        <content>Music</content>
+                    </region-name>
+                    <textarea tabindex="6" id="project-music" class="region-body" placeholder="none" oninput="startChanges('music')" onchange="finishChanges('music')"></textarea>
+                </region>
+            </row>
+        </right>
+    </main>
+
+    <!-- <h1>Hello World!</h1>
+    We are using node
+    <script>document.write(process.versions.node)</script>,
+    Chrome
+    <script>document.write(process.versions.chrome)</script>,
+    and Electron
+    <script>document.write(process.versions.electron)</script>. -->
+</body>
+
+</html>
