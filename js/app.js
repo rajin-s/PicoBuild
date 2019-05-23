@@ -33,6 +33,9 @@ window.addEventListener('keydown', (event) => {
         else if (event.key == 'w') {
             File.closeProject();
         }
+        else if (event.key == 'F12') {
+            remote.getCurrentWindow().openDevTools()
+        }
     }
 }, true)
 
@@ -60,6 +63,9 @@ const App = {
 
     close: () => {
         remote.getCurrentWindow().close()
+    },
+    minimize: () => {
+        remote.getCurrentWindow().minimize()
     },
 
     setFlag: (name) => {
