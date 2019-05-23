@@ -1,4 +1,13 @@
 const { app, BrowserWindow } = require('electron')
+const png = require('pngjs').PNG
+
+exports.readPNG = (path) => {
+    return png.sync.read(path)
+}
+exports.writePNG = (path) => {
+    return png.sync.write(path)
+}
+
 let win // Keep a global reference of the window object, if you don't, the window will be closed automatically when the JavaScript object is garbage collected.
 
 function createWindow() {
@@ -7,8 +16,8 @@ function createWindow() {
         width: 850,
         height: 600,
 
-        minWidth: 750,
-        minHeight: 300,
+        minWidth: 720,
+        minHeight: 650,
 
         frame: false,
         webPreferences: {

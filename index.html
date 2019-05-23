@@ -3,10 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>PicoBuild</title>
     <link rel="stylesheet" type="text/less" href="main.less" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/less.js/3.9.0/less.min.js"></script>
-    <script type="text/javascript" src="app.js"></script>
+
+    <!-- <script type="text/javascript" src="export.js"></script>
+    <script type="text/javascript" src="app.js"></script> -->
+    <script type="text/javascript" src="js/core.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
 </head>
 
 <body id="app">
@@ -14,34 +18,30 @@
         Hello
     </tooltip>
     <title-bar id="title-bar" class="inactive">
-        <button tabindex="-1" class="text new" onclick="newProjectDialog()"
-                onmouseover="showToolTip(this, 'create a PicoBuild project', 'ctrl+N' )"
-                onmouseout="hideToolTip(this)">
+        <button tabindex="-1" class="text new" onclick="File.newProject()"
+            onmouseover="Tooltip.show(this, 'create a PicoBuild project', 'ctrl+N' )" onmouseout="Tooltip.hide(this)">
             new
         </button>
-        <button tabindex="-1" class="text open" onclick="openProjectDialog()" 
-                onmouseover="showToolTip(this, 'open a PicoBuild project', 'ctrl+O')"
-                onmouseout="hideToolTip(this)">
+        <button tabindex="-1" class="text open" onclick="File.openProject()"
+            onmouseover="Tooltip.show(this, 'open a PicoBuild project', 'ctrl+O')" onmouseout="Tooltip.hide(this)">
             open
         </button>
-        <button tabindex="-1" class="text save" onclick="saveProject()" 
-                onmouseover="showToolTip(this, 'save the current project', 'ctrl+S')"
-                onmouseout="hideToolTip(this)">
+        <button tabindex="-1" class="text save" onclick="File.saveProject()"
+            onmouseover="Tooltip.show(this, 'save the current project', 'ctrl+S')" onmouseout="Tooltip.hide(this)">
             save
         </button>
-        <button tabindex="-1" class="text export" onclick="exportProjectDialog()" 
-                onmouseover="showToolTip(this, 'export a .p8 project', 'alt+E')"
-                onmouseout="hideToolTip(this)">
+        <button tabindex="-1" class="text export" onclick="File.exportProject()"
+            onmouseover="Tooltip.show(this, 'export a .p8 project', 'alt+E')" onmouseout="Tooltip.hide(this)">
             export
         </button>
-        <button tabindex="-1" class="text run" onclick="runProject()" 
-                onmouseover="showToolTip(this, 'export and run a .p8 project', 'alt+X')"
-                onmouseout="hideToolTip(this)">
+        <button tabindex="-1" class="text run" onclick="File.runProject()"
+            onmouseover="Tooltip.show(this, 'export and run a .p8 project', 'alt+X')" onmouseout="Tooltip.hide(this)">
             run
         </button>
 
         <window-title>
-            PicoBuild&nbsp;&nbsp;<project-path>&lt;&nbsp;<em class="project-name">no project</em>&nbsp;&gt;
+            PicoBuild&nbsp;&nbsp;
+            <project-path>&lt;&nbsp;<span class="changes"></span><em class="project-name">no project</em>&nbsp;&gt;
             </project-path>
         </window-title>
 
@@ -51,67 +51,110 @@
         <button tabindex="-1" class="right minimize">
             -
         </button>
-        <button tabindex="-1" class="right close" onclick="closeWindow()">
+        <button tabindex="-1" class="right close" onclick="App.close()">
             x
         </button>
     </title-bar>
 
     <no-project>
-        <div>no project loaded :(</div>
+        <div>no project loaded</div>
     </no-project>
 
     <main>
         <left>
-            <region class="text">
-                <region-name><span class="changes"></span> <em class="project-name">none</em></region-name>
-                <textarea class="region-body" tabindex="1" id="project-text" oninput="startChanges('code'); updateProjectFromCode();" onchange="finishChanges('code')">Hello&NewLine;World</textarea>
-            </region>
+            <row class="no-expand">
+                <region class="sprites">
+                    <region-name>
+                        <button tabindex="-1" class="add icon" onclick="Edit.setSprites()"
+                            onmouseover="Tooltip.show(this, 'import sprites from a .p8 or .png file', '')"
+                            onmouseout="Tooltip.hide(this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M18.71 3H5.29L3 5.79V21h18V5.79L18.71 3zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/></svg>
+                        </button>
+                        <content>Sprite Sheet</content>
+                        <button tabindex="-1" class="icon" onclick="Edit.editSource('sprites')"
+                            onmouseover="Tooltip.show(this, 'open the spritesheet in Pico-8<br>(creates project for .png sources)', '')"
+                            onmouseout="Tooltip.hide(this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM21.41 6.34l-3.75-3.75-2.53 2.54 3.75 3.75 2.53-2.54z"/></svg>
+                        </button>
+                    </region-name>
+                    <input type="text" tabindex="2" id="project-sprites" class="region-body" placeholder="none"
+                        oninput="Edit.startTextChanges('sprites')" onchange="Edit.finishTextChanges('sprites')" />
+                </region>
+                <region class="sfx">
+                    <region-name>
+                        <button tabindex="-1" class="add icon" onclick="Edit.setSfx()"
+                            onmouseover="Tooltip.show(this, 'import sfx from a .p8 file', '')"
+                            onmouseout="Tooltip.hide(this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M18.71 3H5.29L3 5.79V21h18V5.79L18.71 3zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/></svg>
+                        </button>
+                        <content>Sfx</content>
+                        <button tabindex="-1" class="icon" onclick="Edit.editSource('sfx')"
+                            onmouseover="Tooltip.show(this, 'open the source project', '')"
+                            onmouseout="Tooltip.hide(this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM21.41 6.34l-3.75-3.75-2.53 2.54 3.75 3.75 2.53-2.54z"/></svg>
+                        </button>
+                    </region-name>
+                    <input type="text" tabindex="3" id="project-sfx" class="region-body" placeholder="none"
+                        oninput="Edit.startTextChanges('sfx')" onchange="Edit.finishTextChanges('sfx')"></input>
+                </region>
+                <region class="music">
+                    <region-name>
+                        <button tabindex="-1" class="add icon" onclick="Edit.setMusic()"
+                            onmouseover="Tooltip.show(this, 'import music from a .p8 file', '')"
+                            onmouseout="Tooltip.hide(this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M18.71 3H5.29L3 5.79V21h18V5.79L18.71 3zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/></svg>
+                        </button>
+                        <content>Music</content>
+                        <button tabindex="-1" class="icon" onclick="Edit.editSource('music')"
+                            onmouseover="Tooltip.show(this, 'open the source project', '')"
+                            onmouseout="Tooltip.hide(this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM21.41 6.34l-3.75-3.75-2.53 2.54 3.75 3.75 2.53-2.54z"/></svg>
+                        </button>
+                    </region-name>
+                    <input type="text" tabindex="4" id="project-music" class="region-body" placeholder="none"
+                        oninput="Edit.startTextChanges('music')" onchange="Edit.finishTextChanges('music')"></input>
+                </region>
+            </row>
+
+            <row>
+                <region class="code">
+                    <region-name>
+                        <button tabindex="-1" class="add icon" onclick="Edit.addScript()"
+                            onmouseover="Tooltip.show(this, 'include a .lua script<br>shift+click to include a directory', '')"
+                            onmouseout="Tooltip.hide(this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M14 2H4v20h16V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"/></svg>
+                        </button>
+                        <content>Scripts</content>
+                    </region-name>
+                    <textarea tabindex="5" id="project-scripts" class="region-body" placeholder="none"
+                        oninput="Edit.startTextChanges('scripts')" onchange="Edit.finishTextChanges('scripts')"></textarea>
+                </region>
+
+                <region class="maps">
+                    <region-name>
+                        <button tabindex="-1" class="add icon" onclick="Edit.addMap()"
+                            onmouseover="Tooltip.show(this, 'import a .tmx map<br>shift+click to import a directory', '')"
+                            onmouseout="Tooltip.hide(this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M14 2H4v20h16V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"/></svg>
+                        </button>
+                        <content>Maps</content>
+                    </region-name>
+                    <textarea tabindex="6" id="project-maps" class="region-body" placeholder="none"
+                        oninput="Edit.startTextChanges('maps')" onchange="Edit.finishTextChanges('maps')"></textarea>
+                </region>
+            </row>
             <!-- <project-source>
                 <project-path><span class="changes"></span> <em class="project-name">none</em></project-path>
                 <textarea tabindex="1" id="project-text" oninput="updateProjectTextFromCode()">Hello&NewLine;World</textarea>
             </project-source> -->
         </left>
         <right>
-            <row>
-                <region class="code">
-                    <region-name>
-                        <button tabindex="-1" class="add" onclick="addScripts()" onmouseover="showToolTip(this, 'include a .lua script<br>shift+click to include a directory', '')" onmouseout="hideToolTip(this)">+</button>
-                        <content>Scripts</content>
-                    </region-name>
-                    <textarea tabindex="2" id="project-scripts" class="region-body" placeholder="none" oninput="startChanges('scripts')" onchange="finishChanges('scripts')"></textarea>
-                </region>
-                <region class="sprites">
-                    <region-name>
-                        <button tabindex="-1" class="add" onclick="addSprites()" onmouseover="showToolTip(this, 'import sprites from a .p8 or .png file<br>shift+click to import a directory', '')" onmouseout="hideToolTip(this)">+</button>
-                        <content>Sprite Sheets</content>
-                    </region-name>
-                    <textarea tabindex="3" id="project-sprites" class="region-body" placeholder="none" oninput="startChanges('sprites')" onchange="finishChanges('sprites')"></textarea>
-                </region>
-            </row>
-            <region class="maps">
-                <region-name>
-                    <button tabindex="-1" class="add" onclick="addMaps()" onmouseover="showToolTip(this, 'import a .tmx map<br>shift+click to import a directory', '')" onmouseout="hideToolTip(this)">+</button>
-                    <content>Maps</content>
-                    <button tabindex="-1" class="extra" onclick="addMaps()" onmouseover="showToolTip(this, 'generate a .png to use with Tiled', '')" onmouseout="hideToolTip(this)">export tileset .png</button>
+            <region class="text">
+                <region-name><span class="changes"></span>&nbsp;&nbsp;<em class="project-name">no project</em>
                 </region-name>
-                <textarea tabindex="4" id="project-maps" class="region-body" placeholder="none" oninput="startChanges('maps')" onchange="finishChanges('maps')"></textarea>
+                <textarea readonly class="region-body" tabindex="1" id="project-text"></textarea>
             </region>
-            <row>
-                <region class="sfx">
-                    <region-name>
-                        <button tabindex="-1" class="add" onclick="addSfx()" onmouseover="showToolTip(this, 'import sfx from a .p8 file', '')" onmouseout="hideToolTip(this)">+</button>
-                        <content>Sfx</content>
-                    </region-name>
-                    <textarea tabindex="5" id="project-sfx" class="region-body" placeholder="none" oninput="startChanges('sfx')" onchange="finishChanges('sfx')"></textarea>
-                </region>
-                <region class="music">
-                    <region-name>
-                        <button tabindex="-1" class="add" onclick="addMusic()" onmouseover="showToolTip(this, 'import music from a .p8 file', '')" onmouseout="hideToolTip(this)">+</button>
-                        <content>Music</content>
-                    </region-name>
-                    <textarea tabindex="6" id="project-music" class="region-body" placeholder="none" oninput="startChanges('music')" onchange="finishChanges('music')"></textarea>
-                </region>
-            </row>
+
         </right>
     </main>
 
