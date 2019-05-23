@@ -2,3 +2,4 @@ node_modules/
 Build/*
 test
 app.cfg
+*.old
